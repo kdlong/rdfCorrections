@@ -2,6 +2,7 @@ import uproot
 import numpy as np
 import numba
 import ROOT
+import os
 
 def loadXsecsForCharge(variation, charge):
     hists = []
@@ -21,8 +22,10 @@ def loadXsecs(variation, bins=False):
     xsecs = np.stack((temp, loadXsecsForCharge(variation, "plus")[0]), axis=-2)
     return (xsecs,binsx,binsy) if bins else xsecs
 
-fminus = uproot.open("/scratch/shared/angularCoefficients/fractions_minus_2022.root")
-fplus = uproot.open("/scratch/shared/angularCoefficients/fractions_plus_2022.root")
+script_dir = os.path.dirname(os.path.realpath(__file__))
+data_dir = f"{script_dir}/data"
+fminus = uproot.open(f"{data_dir}/angularCoefficients/fractions_minus_2022.root")
+fplus = uproot.open(f"{data_dir}/angularCoefficients/fractions_plus_2022.root")
 nominal,binsy,binspt = loadXsecs("nominal", bins=True)
 muRmuFUp = loadXsecs("muRmuFUp")
 muRmuFDown = loadXsecs("muRmuFDown")
@@ -123,10 +126,10 @@ def qcdUncByHelicity(ptW, yW, charge, sintheta, costheta, sinphi, cosphi):
     binq = 0 if charge < 0 else 1
     nom = nominal[biny,binpt,binq]
     return np.concatenate((makeWeights1D(nom, muRmuFUp[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
-        makeWeights1D(nom, muRmuFDown[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
         makeWeights1D(nom, muRUp[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
-        makeWeights1D(nom, muRDown[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
         makeWeights1D(nom, muFUp[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
+        makeWeights1D(nom, muRmuFDown[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
+        makeWeights1D(nom, muRDown[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
         makeWeights1D(nom, muFDown[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),),
     axis=0)
 

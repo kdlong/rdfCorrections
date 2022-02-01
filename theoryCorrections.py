@@ -3,7 +3,7 @@ import numpy as np
 import numba
 import os
 script_dir = os.path.dirname(os.path.realpath(__file__))
-data_dir = f"{script_dir}/../../data"
+data_dir = f"{script_dir}/data/N3LLCorrections"
 
 correctionsWp_file = np.load(f"{data_dir}/inclusive_Wp_pT.npz", allow_pickle=True)
 binsWp = correctionsWp_file['bins']
