@@ -23,7 +23,7 @@ def loadXsecs(variation, bins=False):
     return (xsecs,binsx,binsy) if bins else xsecs
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-data_dir = f"{script_dir}/data"
+data_dir = f"{script_dir}/../data"
 fminus = uproot.open(f"{data_dir}/angularCoefficients/fractions_minus_2022.root")
 fplus = uproot.open(f"{data_dir}/angularCoefficients/fractions_plus_2022.root")
 nominal,binsy,binspt = loadXsecs("nominal", bins=True)
@@ -123,9 +123,10 @@ def qcdUncByHelicity(ptW, yW, charge, sintheta, costheta, sinphi, cosphi):
     # Not actually constant, but the last bin is basically overflow so it works
     biny = findBinReg(np.abs(yW), binsy)
     binpt = findBinIrreg(ptW, binspt)
-    binq = 0 if charge < 0 else 1
+    binq = 1 if charge > 0 else 0
     nom = nominal[biny,binpt,binq]
-    return np.concatenate((makeWeights1D(nom, muRmuFUp[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
+    return np.concatenate((
+        makeWeights1D(nom, muRmuFUp[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
         makeWeights1D(nom, muRUp[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
         makeWeights1D(nom, muFUp[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),
         makeWeights1D(nom, muRmuFDown[biny,binpt,binq], sintheta, costheta, sinphi, cosphi),

@@ -1,3 +1,3 @@
 import ROOT
-from . import theoryCorrections,muonCorr,qcdUncByHelicity
-ROOT.gInterpreter.Declare('#include "helicityWeightsToTensor.h"')
+import pathlib
+from .numba import theoryCorrections,muonCorr,qcdUncByHelicity
